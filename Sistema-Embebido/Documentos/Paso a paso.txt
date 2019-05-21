@@ -1,16 +1,5 @@
 SOA - LaberintoSmart
-
-1x Arduino UNO				| Entre $400 y $600
-3x Sensores Optico infrarroko CNY70	| Entre $30 y $50 c/u
-1x Modulo Bluetooth HC-06		| Entre $250 y $400
-1x Sensor Ultrasonico HC-SR04		| Entre $80 y $120
-1x Punte H doble L298			| Entre $180 y $240
-2x Motor con caja reductora		| Entre $200 y $300 c/u - Motor Dc 3v A 6v Caja Reductora Rueda Goma Arduino Mona
-4x Pila AA				| Aprox $30 c/u
-1x Bateria 9v				| Aprox $50
-1x Rueda de goma giratoria 40mm 	| Entre $40 y $50
-1x Protoboard				| Aprox $150
-1x Led Rojo				| 
+========================================
 
 Lista de pasos a seguir
 1- Comprar todos los materiales.
