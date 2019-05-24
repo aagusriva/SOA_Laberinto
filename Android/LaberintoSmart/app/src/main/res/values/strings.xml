@@ -1,6 +1,9 @@
 <resources>
-    <string name="app_name">LaberintoSmart</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="app_name">Laberinto Smart</string>
+    <string name="title_home">Inicio</string>
+    <string name="title_register">Registros</string>
+    <string name="title_information">Info</string>
+    <string name="btn_start">Iniciar</string>
+    <string name="btn_test">Comprobar conexión</string>
+    <string name="btn_finish">Terminar</string>
 </resources>
