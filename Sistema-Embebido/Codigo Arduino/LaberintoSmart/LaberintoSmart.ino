@@ -1,7 +1,11 @@
 int infraPin1 = 8;
 int infraPin2 = 7;
 int valorInfra1 = 0;
-
+int valorInfra2 = 0;
+int valorInfra3 = 0;
+int valorInfra4 = 0;
+int valorInfra5 = 0;
+/*
 //Motor A
 int pinENA = 10;
 int pinIN1 = 9;
@@ -18,18 +22,18 @@ int pinUltraSonidoEcho = 4;
 //Bluethoot
 #include <SoftwareSerial.h>
 SoftwareSerial BT1(4,2);
-
+*/
 void setup() {
   Serial.begin(9600); // Comenzamos comunicacion serial.
   
   //Motor
-  pinMode (pinENA, OUTPUT);
+  /*pinMode (pinENA, OUTPUT);
   pinMode (pinENB, OUTPUT);
   pinMode (pinIN1, OUTPUT);
   pinMode (pinIN2, OUTPUT);
   pinMode (pinIN3, OUTPUT);
   pinMode (pinIN4, OUTPUT);
-  
+  */
   
   //Ultrasonido
   /*pinMode(pinUltraSonidoTrig, OUTPUT); //pin como salida
@@ -43,11 +47,23 @@ void setup() {
 }
 
 void loop() {
-  /*valorInfra1 = analogRead(0);
-  //Serial.print("SENSOR1: ");
-  //Serial.println(valorInfra1);
+  valorInfra1 = analogRead(1);
+  valorInfra2 = analogRead(2);
+  valorInfra3 = analogRead(3);
+  valorInfra4 = analogRead(4);
+  valorInfra5 = analogRead(5);
+  Serial.print("SENSOR1: ");
+  Serial.println(valorInfra1);
+  Serial.print("SENSOR2: ");
+  Serial.println(valorInfra2);
+  Serial.print("SENSOR3: ");
+  Serial.println(valorInfra3);
+  Serial.print("SENSOR4: ");
+  Serial.println(valorInfra4);
+  Serial.print("SENSOR5: ");
+  Serial.println(valorInfra5);
 
-  if(valorInfra1 > 10){
+  /*if(valorInfra1 > 10){
     digitalWrite(infraPin2,HIGH);
     //Para adelante
     digitalWrite (pinMotor1, HIGH);
@@ -57,9 +73,9 @@ void loop() {
     //Para atras
     digitalWrite (pinMotor1, LOW);
     digitalWrite (pinMotor2, HIGH);
-  }
+  }*/
 
-  //delay(500);*/
+  delay(2000);
 
   //Medidor de distancia
   /*long t; //timepo que demora en llegar el eco
@@ -79,16 +95,16 @@ void loop() {
   delay(1000);          //Hacemos una pausa de 100ms
   */
   //Motor
-  Adelante ();
-  delay (10000);
+  /*delay(5000);
+  Adelante();
+  delay(5000);*/
   /*Atras ();
-  delay (10000);
-  Derecha ();
-  delay (10000);
-  Izquierda ();
   delay (10000);*/
-  Parar ();
-  delay (10000);
+  /*Derecha();
+  delay(5000);
+  Izquierda();
+  delay(5000);
+  Parar();*/
   
 
   //Bluethoot
@@ -101,7 +117,7 @@ void loop() {
        Serial.println("---> " + S);
     }*/
 }
-
+/*
 void Adelante ()
 {
  //Direccion motor A
@@ -131,23 +147,23 @@ void Derecha ()
  //Direccion motor A
  digitalWrite (pinIN1, HIGH);
  digitalWrite (pinIN2, LOW);
- analogWrite (pinENA, 200); //Velocidad motor A
+ analogWrite (pinENA, 255); //Velocidad motor A
  //Direccion motor B
  digitalWrite (pinIN3, LOW);
- digitalWrite (pinIN4, HIGH);
- analogWrite (pinENB, 100); //Velocidad motor A
+ digitalWrite (pinIN4, LOW);
+ analogWrite (pinENB, 0); //Velocidad motor A
 }
 
 void Izquierda ()
 {
  //Direccion motor A
  digitalWrite (pinIN1, LOW);
- digitalWrite (pinIN2, HIGH);
- analogWrite (pinENA, 100); //Velocidad motor A
+ digitalWrite (pinIN2, LOW);
+ analogWrite (pinENA, 0); //Velocidad motor A
  //Direccion motor B
  digitalWrite (pinIN3, HIGH);
  digitalWrite (pinIN4, LOW);
- analogWrite (pinENB, 200); //Velocidad motor A
+ analogWrite (pinENB, 255); //Velocidad motor A
 }
 
 void Parar ()
@@ -161,7 +177,7 @@ void Parar ()
  digitalWrite (pinIN4, LOW);
  analogWrite (pinENB, 0); //Velocidad motor A
 }
-
+*/
 /*
 String GetLine()
 {   String S = "" ;
