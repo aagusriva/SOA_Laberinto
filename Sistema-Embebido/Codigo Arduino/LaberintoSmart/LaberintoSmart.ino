@@ -1,11 +1,14 @@
-int infraPin1 = 8;
-int infraPin2 = 7;
+//Infrarrojo
+/*
+int infraPin1 = 7;
+
 int valorInfra1 = 0;
 int valorInfra2 = 0;
 int valorInfra3 = 0;
 int valorInfra4 = 0;
 int valorInfra5 = 0;
-/*
+*/
+
 //Motor A
 int pinENA = 10;
 int pinIN1 = 9;
@@ -15,6 +18,7 @@ int pinIN3 = 7;
 int pinIN4 = 6;
 int pinENB = 5;
 
+/*
 //Ultrasonido
 int pinUltraSonidoTrig = 3;
 int pinUltraSonidoEcho = 4;
@@ -26,14 +30,18 @@ SoftwareSerial BT1(4,2);
 void setup() {
   Serial.begin(9600); // Comenzamos comunicacion serial.
   
+  //Infrarrojo
+  /*pinMode (infraPin1, INPUT);
+  */
+  
   //Motor
-  /*pinMode (pinENA, OUTPUT);
+  pinMode (pinENA, OUTPUT);
   pinMode (pinENB, OUTPUT);
   pinMode (pinIN1, OUTPUT);
   pinMode (pinIN2, OUTPUT);
   pinMode (pinIN3, OUTPUT);
   pinMode (pinIN4, OUTPUT);
-  */
+  
   
   //Ultrasonido
   /*pinMode(pinUltraSonidoTrig, OUTPUT); //pin como salida
@@ -47,21 +55,25 @@ void setup() {
 }
 
 void loop() {
-  valorInfra1 = analogRead(1);
+  //Infrarrojo
+  //valorInfra1 = digitalRead(infraPin1);
+  /*valorInfra1 = analogRead(1);
   valorInfra2 = analogRead(2);
   valorInfra3 = analogRead(3);
   valorInfra4 = analogRead(4);
   valorInfra5 = analogRead(5);
-  Serial.print("SENSOR1: ");
+  Serial.print("SENSOR 1: ");
   Serial.println(valorInfra1);
-  Serial.print("SENSOR2: ");
+  Serial.print("SENSOR 2: ");
   Serial.println(valorInfra2);
-  Serial.print("SENSOR3: ");
+  Serial.print("SENSOR 3: ");
   Serial.println(valorInfra3);
-  Serial.print("SENSOR4: ");
+  Serial.print("SENSOR 4: ");
   Serial.println(valorInfra4);
-  Serial.print("SENSOR5: ");
+  Serial.print("SENSOR 5: ");
   Serial.println(valorInfra5);
+  
+  Serial.println("");*/
 
   /*if(valorInfra1 > 10){
     digitalWrite(infraPin2,HIGH);
@@ -75,7 +87,7 @@ void loop() {
     digitalWrite (pinMotor2, HIGH);
   }*/
 
-  delay(2000);
+  delay(1000);
 
   //Medidor de distancia
   /*long t; //timepo que demora en llegar el eco
@@ -94,17 +106,18 @@ void loop() {
   Serial.println();
   delay(1000);          //Hacemos una pausa de 100ms
   */
+  
   //Motor
-  /*delay(5000);
+  delay(5000);
   Adelante();
-  delay(5000);*/
+  delay(5000);
   /*Atras ();
   delay (10000);*/
-  /*Derecha();
+  Derecha();
   delay(5000);
   Izquierda();
   delay(5000);
-  Parar();*/
+  Parar();
   
 
   //Bluethoot
@@ -117,7 +130,7 @@ void loop() {
        Serial.println("---> " + S);
     }*/
 }
-/*
+
 void Adelante ()
 {
  //Direccion motor A
@@ -177,7 +190,7 @@ void Parar ()
  digitalWrite (pinIN4, LOW);
  analogWrite (pinENB, 0); //Velocidad motor A
 }
-*/
+
 /*
 String GetLine()
 {   String S = "" ;
