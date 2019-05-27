@@ -1,5 +1,6 @@
 package com.example.laberintosmart.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,11 +12,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.laberintosmart.R;
+import com.example.laberintosmart.activities.StartActivity;
 
 public class InicioFragment extends Fragment {
 
     private Button btnIniciar;
-    private Button btnFinish;
+    //private Button btnFinish;
     private Button btnTest;
 
     public InicioFragment() {
@@ -35,23 +37,31 @@ public class InicioFragment extends Fragment {
 
         //Inicio de Variables
         btnIniciar = getView().findViewById(R.id.button_start);
-        btnFinish = getView().findViewById(R.id.button_finish);
+        //btnFinish = getView().findViewById(R.id.button_finish);
         btnTest = getView().findViewById(R.id.button_test);
 
-        //Fijacion de Listeners
+        //Fijacion de Listeners**************
         btnIniciar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(InicioFragment.this.getContext(), "boton START clickeado", Toast.LENGTH_LONG).show();
+                //Comprobar enlace con Arduino
+                if(!comprobarEnlace()) {
+                    Toast.makeText(InicioFragment.this.getContext(), "Auto no conectado", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Intent intent = new Intent(view.getContext(), StartActivity.class);
+                intent.putExtra("Prueba", "pruebaa");
+                startActivity(intent);
             }
         });
 
-        btnFinish.setOnClickListener(new View.OnClickListener() {
+/*        btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(InicioFragment.this.getContext(), "boton TERMINAR clickeado", Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
         btnTest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,5 +69,12 @@ public class InicioFragment extends Fragment {
                 Toast.makeText(InicioFragment.this.getContext(), "boton TEST clickeado", Toast.LENGTH_LONG).show();
             }
         });
+        //*************************************
     }
+
+    public boolean comprobarEnlace(){
+        return true;
+    }
+
+
 }

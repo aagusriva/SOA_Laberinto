@@ -6,4 +6,6 @@
     <string name="btn_start">Iniciar</string>
     <string name="btn_test">Comprobar conexión</string>
     <string name="btn_finish">Terminar</string>
+    <string name="resolving">Resolviendo Laberinto</string>
+    <string name="state">Estado:</string>
 </resources>
