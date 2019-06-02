@@ -1,13 +1,13 @@
 //Infrarrojo
 /*
 int infraPin1 = 7;
-
+*/
 int valorInfra1 = 0;
 int valorInfra2 = 0;
 int valorInfra3 = 0;
 int valorInfra4 = 0;
 int valorInfra5 = 0;
-*/
+
 
 //Motor A
 int pinENA = 10;
@@ -56,21 +56,21 @@ void setup() {
 
 void loop() {
   //Infrarrojo
-  //valorInfra1 = digitalRead(infraPin1);
+  /*valorInfra1 = digitalRead(infraPin1);*/
   /*valorInfra1 = analogRead(1);
   valorInfra2 = analogRead(2);
   valorInfra3 = analogRead(3);
   valorInfra4 = analogRead(4);
-  valorInfra5 = analogRead(5);
-  Serial.print("SENSOR 1: ");
+  valorInfra5 = analogRead(5);*/
+  /*Serial.print("SENSOR 1: ");
   Serial.println(valorInfra1);
   Serial.print("SENSOR 2: ");
   Serial.println(valorInfra2);
   Serial.print("SENSOR 3: ");
   Serial.println(valorInfra3);
   Serial.print("SENSOR 4: ");
-  Serial.println(valorInfra4);
-  Serial.print("SENSOR 5: ");
+  Serial.println(valorInfra4);*/
+  /*Serial.print("SENSOR 5: ");
   Serial.println(valorInfra5);
   
   Serial.println("");*/
@@ -87,7 +87,7 @@ void loop() {
     digitalWrite (pinMotor2, HIGH);
   }*/
 
-  delay(1000);
+  //delay(1000);
 
   //Medidor de distancia
   /*long t; //timepo que demora en llegar el eco
@@ -110,13 +110,13 @@ void loop() {
   //Motor
   delay(5000);
   Adelante();
-  delay(5000);
+  delay(3000);
   /*Atras ();
   delay (10000);*/
   Derecha();
-  delay(5000);
+  delay(3000);
   Izquierda();
-  delay(5000);
+  delay(3000);
   Parar();
   
 
