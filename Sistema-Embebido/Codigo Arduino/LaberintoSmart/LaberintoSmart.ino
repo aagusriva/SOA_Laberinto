@@ -1,3 +1,7 @@
+int primero = 0;
+int tiempo_inicial = 0;
+int tiempo_actual = 0;
+int estaGirandoEnU = 0;
 //Infrarrojo
 /*
 int infraPin1 = 7;
@@ -7,7 +11,6 @@ int valorInfra2 = 0;
 int valorInfra3 = 0;
 int valorInfra4 = 0;
 int valorInfra5 = 0;
-
 
 //Motor A
 int pinENA = 10;
@@ -57,37 +60,51 @@ void setup() {
 void loop() {
   //Infrarrojo
   /*valorInfra1 = digitalRead(infraPin1);*/
-  /*valorInfra1 = analogRead(1);
+  valorInfra1 = analogRead(1);
   valorInfra2 = analogRead(2);
-  valorInfra3 = analogRead(3);
+  /*valorInfra3 = analogRead(3);
   valorInfra4 = analogRead(4);
   valorInfra5 = analogRead(5);*/
   /*Serial.print("SENSOR 1: ");
   Serial.println(valorInfra1);
   Serial.print("SENSOR 2: ");
-  Serial.println(valorInfra2);
-  Serial.print("SENSOR 3: ");
+  Serial.println(valorInfra2);*/
+  /*Serial.print("SENSOR 3: ");
   Serial.println(valorInfra3);
   Serial.print("SENSOR 4: ");
   Serial.println(valorInfra4);*/
   /*Serial.print("SENSOR 5: ");
-  Serial.println(valorInfra5);
+  Serial.println(valorInfra5);*/
   
-  Serial.println("");*/
+  /*Serial.println("");
+  delay(1000);*/
 
-  /*if(valorInfra1 > 10){
-    digitalWrite(infraPin2,HIGH);
-    //Para adelante
-    digitalWrite (pinMotor1, HIGH);
-    digitalWrite (pinMotor2, LOW);
+  if(valorInfra1 > 80 && valorInfra2 > 80){
+    if(primero < 1){
+      delay(5000);
+      primero = 1;
+    }else{
+      Parar();
+      estaGirandoEnU = 1;
+      giroEnU();
+    }
   }else{
-    digitalWrite(infraPin2,LOW);
-    //Para atras
-    digitalWrite (pinMotor1, LOW);
-    digitalWrite (pinMotor2, HIGH);
-  }*/
-
-  //delay(1000);
+    if(estaGirandoEnU == 1){
+      Parar();
+      estaGirandoEnU = 0;
+      acomodarDerecha();
+      delay(100);
+    }
+    if(valorInfra1 > 80 && valorInfra2 <= 80){
+      acomodarDerecha();
+    }else{
+      if(valorInfra2 > 80 && valorInfra1 <= 80){
+          acomodarIzquierda();
+      }else{
+        Adelante();
+      }
+    }  
+  }
 
   //Medidor de distancia
   /*long t; //timepo que demora en llegar el eco
@@ -107,17 +124,6 @@ void loop() {
   delay(1000);          //Hacemos una pausa de 100ms
   */
   
-  //Motor
-  delay(5000);
-  Adelante();
-  delay(3000);
-  /*Atras ();
-  delay (10000);*/
-  Derecha();
-  delay(3000);
-  Izquierda();
-  delay(3000);
-  Parar();
   
 
   //Bluethoot
@@ -143,6 +149,19 @@ void Adelante ()
  analogWrite (pinENB, 255); //Velocidad motor B
 }
 
+void giroEnU ()
+{
+ //Direccion motor A
+ digitalWrite (pinIN1, LOW);
+ digitalWrite (pinIN2, HIGH);
+ analogWrite (pinENA, 255); //Velocidad motor A
+ //Direccion motor B
+ digitalWrite (pinIN3, HIGH);
+ digitalWrite (pinIN4, LOW);
+ analogWrite (pinENB, 128); //Velocidad motor B
+}
+
+
 void Atras ()
 {
  //Direccion motor A
@@ -167,10 +186,33 @@ void Derecha ()
  analogWrite (pinENB, 0); //Velocidad motor A
 }
 
+void acomodarDerecha(){
+ //Direccion motor A
+ digitalWrite (pinIN1, HIGH);
+ digitalWrite (pinIN2, LOW);
+ analogWrite (pinENA, 255); //Velocidad motor A
+ //Direccion motor B
+ digitalWrite (pinIN3, HIGH);
+ digitalWrite (pinIN4, LOW);
+ analogWrite (pinENB, 0); //Velocidad motor A
+}
+
 void Izquierda ()
 {
  //Direccion motor A
  digitalWrite (pinIN1, LOW);
+ digitalWrite (pinIN2, LOW);
+ analogWrite (pinENA, 0); //Velocidad motor A
+ //Direccion motor B
+ digitalWrite (pinIN3, HIGH);
+ digitalWrite (pinIN4, LOW);
+ analogWrite (pinENB, 255); //Velocidad motor A
+}
+
+void acomodarIzquierda ()
+{
+ //Direccion motor A
+ digitalWrite (pinIN1, HIGH);
  digitalWrite (pinIN2, LOW);
  analogWrite (pinENA, 0); //Velocidad motor A
  //Direccion motor B
