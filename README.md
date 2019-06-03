@@ -1,10 +1,10 @@
-# Sistemas Operativos Avanzados
+﻿# Sistemas Operativos Avanzados
 
 ## Trabajo Práctico IOT, Sistemas Embebidos y Android
 
 Integrantes:
 - Ezequiel Focaraccio
-- Luciano Galluzzo
+- Luciano Galluzzow
 - Agustin Riva
 
 
