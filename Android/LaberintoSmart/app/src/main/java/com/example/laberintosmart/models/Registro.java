@@ -1,10 +1,12 @@
 package com.example.laberintosmart.models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Registro {
 
-    private Date time;
+    private Date date;
     private long duration;
     private boolean resuelto;
     private Estado estado;
@@ -12,16 +14,23 @@ public class Registro {
     private long tiempoFin;
 
     public Registro (){
-        time = new Date();
+        date = new Date();
         tiempoInicio = System.currentTimeMillis();
     }
 
-    public Date getTime() {
-        return time;
+    public Registro(long duration, boolean resuelto, Estado estado) {
+        this.date = new Date();
+        this.duration = duration;
+        this.resuelto = resuelto;
+        this.estado = estado;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public long getDuration() {
@@ -54,7 +63,17 @@ public class Registro {
         return duration;
     }
 
+
+
     public boolean guardarRegistro(){
         return true;
+    }
+
+    public static List<Registro> getExampleData(){
+        List<Registro> ls = new ArrayList<Registro>();
+        ls.add(new Registro(10, true, Estado.SUCCESS));
+        ls.add(new Registro(15, false, Estado.TERMINATED));
+        ls.add(new Registro(20, false, Estado.BLOCKED));
+        return ls;
     }
 }
