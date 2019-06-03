@@ -4,7 +4,7 @@
 
 Integrantes:
 - Ezequiel Focaraccio
-- Luciano Galluzzow
+- Luciano Galluzzo
 - Agustin Riva
 
 
