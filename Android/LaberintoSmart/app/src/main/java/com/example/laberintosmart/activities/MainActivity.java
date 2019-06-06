@@ -1,5 +1,7 @@
 package com.example.laberintosmart.activities;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -20,11 +22,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private BottomNavigationView navView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Bottom nav view
         navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
 
@@ -60,4 +64,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return switchFragment(fragment);
     }
+
 }

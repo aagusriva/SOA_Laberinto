@@ -69,8 +69,21 @@ public class Registro {
         return true;
     }
 
+    public String dateToString(){
+        if(this.date == null)
+            return "";
+        String dateFormat = this.date.toString();
+        return dateFormat.split("G")[0] + dateFormat.substring(dateFormat.length()-5,dateFormat.length());
+    }
+
     public static List<Registro> getExampleData(){
         List<Registro> ls = new ArrayList<Registro>();
+        ls.add(new Registro(10, true, Estado.SUCCESS));
+        ls.add(new Registro(15, false, Estado.TERMINATED));
+        ls.add(new Registro(20, false, Estado.BLOCKED));
+        ls.add(new Registro(10, true, Estado.SUCCESS));
+        ls.add(new Registro(15, false, Estado.TERMINATED));
+        ls.add(new Registro(20, false, Estado.BLOCKED));
         ls.add(new Registro(10, true, Estado.SUCCESS));
         ls.add(new Registro(15, false, Estado.TERMINATED));
         ls.add(new Registro(20, false, Estado.BLOCKED));
