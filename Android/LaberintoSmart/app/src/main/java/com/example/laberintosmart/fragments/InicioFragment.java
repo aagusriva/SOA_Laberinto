@@ -14,11 +14,9 @@ import android.os.ParcelUuid;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -55,9 +53,7 @@ public class InicioFragment extends Fragment{
     private int readBufferPosition;
     private byte[] readBuffer;
 
-    public InicioFragment() {
-        // Required empty public constructor
-    }
+    public InicioFragment() {    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -199,8 +195,7 @@ public class InicioFragment extends Fragment{
     }
 
 
-    void beginListenForData()
-    {
+    void beginListenForData() {
         final Handler handler = new Handler();
         final byte delimiter = 10; //This is the ASCII code for a newline character
 
@@ -256,8 +251,7 @@ public class InicioFragment extends Fragment{
         bluetoothThread.start();
     }
 
-    void sendData(String msg) throws IOException
-    {
+    void sendData(String msg) throws IOException {
         msg += "\n";
         outputStream.write(msg.getBytes());
     }

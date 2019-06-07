@@ -50,7 +50,7 @@ public class RegisterAdapter extends BaseAdapter {
         textDuration = view.findViewById(R.id.text_duration);
         textState = view.findViewById(R.id.text_state);
 
-        textDate.setText(registros.get(position).dateToString());
+        textDate.setText(registros.get(position).getDateString());
         textDuration.setText(Long.toString(registros.get(position).getDuration()));
         textState.setText(registros.get(position).getEstado().toString());
 

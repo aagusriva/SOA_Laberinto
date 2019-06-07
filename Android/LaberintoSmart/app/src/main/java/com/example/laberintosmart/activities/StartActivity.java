@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.laberintosmart.R;
+import com.example.laberintosmart.models.Estado;
 import com.example.laberintosmart.models.Registro;
 
 public class StartActivity extends AppCompatActivity {
@@ -41,6 +42,7 @@ public class StartActivity extends AppCompatActivity {
 
     public void terminarRegistro(){
         registro.calcularDuracion();
-        registro.guardarRegistro();
+        registro.setEstado(Estado.TERMINATED);
+        registro.guardarRegistro(getApplicationContext());
     }
 }
