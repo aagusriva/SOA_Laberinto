@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.laberintosmart.R;
 import com.example.laberintosmart.activities.StartActivity;
+import com.example.laberintosmart.adapters.BluetoothClient;
 import com.example.laberintosmart.adapters.BluetoothListAdapter;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import static android.support.constraint.Constraints.TAG;
 
 public class InicioFragment extends Fragment{
 
+    private boolean btConfigured;
     private Button btnIniciar;
     private Button btnConnect;
     private Button btnTest;
@@ -52,6 +54,8 @@ public class InicioFragment extends Fragment{
     private boolean stopWorker;
     private int readBufferPosition;
     private byte[] readBuffer;
+    private BluetoothClient btClient;
+
 
     public InicioFragment() {    }
 
@@ -66,6 +70,11 @@ public class InicioFragment extends Fragment{
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        btConfigured = false;
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -107,7 +116,7 @@ public class InicioFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 Toast.makeText(InicioFragment.this.getContext(), "boton Conectar clickeado", Toast.LENGTH_LONG).show();
-                if(!comprobarEnlace())
+                if(!comprobarEnlace() && btClient == null)
                     return;
 
                 pairedDevices= new ArrayList<>(btAdapter.getBondedDevices());
@@ -119,6 +128,8 @@ public class InicioFragment extends Fragment{
                     for(BluetoothDevice device : pairedDevices) {
                         if(device.getName().equals(BluetoothListAdapter.btCarName)) {
                             btDevice = device;
+                            btClient = new BluetoothClient(device, btAdapter, getContext());
+                            btClient.run();
                             break;
                         }
                     }
@@ -129,15 +140,9 @@ public class InicioFragment extends Fragment{
                     Toast.makeText(InicioFragment.this.getContext(), "Dispositivo encontrado", Toast.LENGTH_LONG).show();
 
                     //conectarConDispositivo();
-                    //beginListenForData();
+                    //write("F");
                 }
 
-                //pairedDevices = new ArrayList<>();
-                //if(!btAdapter.isDiscovering()){
-                //    btAdapter.startDiscovery();
-                //    IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                //    getActivity().registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
-                //} else btAdapter.cancelDiscovery();
             }
         });
         //*************************************
@@ -167,9 +172,7 @@ public class InicioFragment extends Fragment{
         return false;
     }
 
-    public void write(String s) throws IOException {
-        outputStream.write(s.getBytes());
-    }
+
 
     public void configBluetooth(View v){
         btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -195,64 +198,5 @@ public class InicioFragment extends Fragment{
     }
 
 
-    void beginListenForData() {
-        final Handler handler = new Handler();
-        final byte delimiter = 10; //This is the ASCII code for a newline character
 
-        stopWorker = false;
-        readBufferPosition = 0;
-        readBuffer = new byte[1024];
-        bluetoothThread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                while(!Thread.currentThread().isInterrupted() && !stopWorker)
-                {
-                    try
-                    {
-                        int bytesAvailable = inStream.available();
-                        if(bytesAvailable > 0)
-                        {
-                            byte[] packetBytes = new byte[bytesAvailable];
-                            inStream.read(packetBytes);
-                            for(int i=0;i<bytesAvailable;i++)
-                            {
-                                byte b = packetBytes[i];
-                                if(b == delimiter)
-                                {
-                                    byte[] encodedBytes = new byte[readBufferPosition];
-                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
-                                    final String data = new String(encodedBytes, "US-ASCII");
-                                    readBufferPosition = 0;
-
-                                    handler.post(new Runnable()
-                                    {
-                                        public void run()
-                                        {
-                                            //MANEJO DE LOS DATOS DE ENTRADA
-                                        }
-                                    });
-                                }
-                                else
-                                {
-                                    readBuffer[readBufferPosition++] = b;
-                                }
-                            }
-                        }
-                    }
-                    catch (IOException ex)
-                    {
-                        stopWorker = true;
-                    }
-                }
-            }
-        });
-
-        bluetoothThread.start();
-    }
-
-    void sendData(String msg) throws IOException {
-        msg += "\n";
-        outputStream.write(msg.getBytes());
-    }
 }

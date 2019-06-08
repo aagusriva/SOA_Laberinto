@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class BluetoothListAdapter extends BaseAdapter {
 
-    public static final String btCarName = "VW_RADIO_94";
+    public static final String btCarName = "HC-06";
 
     private Context context;
     private int layout;
