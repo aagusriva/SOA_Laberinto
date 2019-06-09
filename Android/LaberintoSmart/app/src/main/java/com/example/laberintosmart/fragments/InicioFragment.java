@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.laberintosmart.R;
+import com.example.laberintosmart.activities.BTActivity;
 import com.example.laberintosmart.activities.StartActivity;
 import com.example.laberintosmart.adapters.BluetoothClient;
 import com.example.laberintosmart.adapters.BluetoothListAdapter;
@@ -105,10 +106,13 @@ public class InicioFragment extends Fragment{
         btnTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(InicioFragment.this.getContext(), "boton TEST clickeado", Toast.LENGTH_LONG).show();
-                if(!comprobarEnlace())
-                    return;
+                //Toast.makeText(InicioFragment.this.getContext(), "boton TEST clickeado", Toast.LENGTH_LONG).show();
+                //if(!comprobarEnlace())
+                    //return;
                 //pairedDevices = btAdapter.getBondedDevices();
+                Intent intent = new Intent(view.getContext(), BTActivity.class);
+                intent.putExtra("Prueba", "pruebaa");
+                startActivity(intent);
             }
         });
 
