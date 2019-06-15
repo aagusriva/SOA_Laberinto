@@ -1,10 +1,12 @@
 package com.example.laberintosmart.fragments;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -56,6 +58,7 @@ public class InicioFragment extends Fragment{
     private int readBufferPosition;
     private byte[] readBuffer;
     private BluetoothClient btClient;
+    private boolean modoManual;
 
 
     public InicioFragment() {    }
@@ -82,24 +85,56 @@ public class InicioFragment extends Fragment{
 
         //Inicio de Variables
         btnIniciar = view.findViewById(R.id.button_start);
-        btnConnect = view.findViewById(R.id.button_connect);
+        //btnConnect = view.findViewById(R.id.button_connect);
         btnTest = view.findViewById(R.id.button_test);
-        listaDeDispositivos = view.findViewById(R.id.listaDeDispositivos);
+        //listaDeDispositivos = view.findViewById(R.id.listaDeDispositivos);
         //listaDeDispositivos.setOnItemClickListener(InicioFragment.this);
 
         //Fijacion de Listeners**************
         btnIniciar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(InicioFragment.this.getContext(), "boton START clickeado", Toast.LENGTH_LONG).show();
                 //Comprobar enlace con Arduino
                 if(!comprobarEnlace()) {
                     Toast.makeText(InicioFragment.this.getContext(), "Auto no conectado", Toast.LENGTH_LONG).show();
                     return;
                 }
-                Intent intent = new Intent(view.getContext(), StartActivity.class);
-                intent.putExtra("Prueba", "pruebaa");
-                startActivity(intent);
+
+                modoManual = false;
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(view.getContext());
+                builder1.setMessage("Elija modalidad de resolución.");
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "Manual",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                modoManual = true;
+                                dialog.cancel();
+                                Intent intent = new Intent(getContext(), StartActivity.class);
+                                intent.putExtra("modoManual", modoManual);
+                                startActivity(intent);
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "Automático",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                modoManual = false;
+                                dialog.cancel();
+                                Intent intent = new Intent(getContext(), StartActivity.class);
+                                intent.putExtra("modoManual", modoManual);
+                                startActivity(intent);
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+
+
+
             }
         });
 
@@ -116,6 +151,7 @@ public class InicioFragment extends Fragment{
             }
         });
 
+        /*
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,6 +185,7 @@ public class InicioFragment extends Fragment{
 
             }
         });
+        */
         //*************************************
     }
 

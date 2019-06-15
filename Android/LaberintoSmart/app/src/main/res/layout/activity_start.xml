@@ -71,6 +71,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_title" />
 
+
+
     <TextView
         android:id="@+id/start_state"
         android:layout_width="wrap_content"
@@ -89,15 +91,12 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Tiempo:"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/start_end"
         app:layout_constraintEnd_toStartOf="@+id/progressBar"
         app:layout_constraintHorizontal_bias="0.721"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.026" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -112,5 +111,39 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_state"
         app:layout_constraintVertical_bias="0.021" />
+
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Modo:"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/start_end"
+        app:layout_constraintEnd_toStartOf="@+id/txtModo"
+        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+    <TextView
+        android:id="@+id/txtModo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="8dp"
+        android:text="-"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.67"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
 
 </android.support.constraint.ConstraintLayout>

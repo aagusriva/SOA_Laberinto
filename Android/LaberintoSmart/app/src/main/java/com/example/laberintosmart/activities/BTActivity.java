@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.laberintosmart.R;
@@ -73,6 +74,7 @@ public class BTActivity extends Activity {
 
         //se asocia un listener al boton cancelar para la ventana de dialogo ue busca los dispositivos bluethoot
         mProgressDlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", btnCancelarDialogListener);
+
 
         //
         if (checkPermissions())
@@ -220,11 +222,11 @@ public class BTActivity extends Activity {
 
                 //se inicia el activity DeviceListActivity pasandole como parametros, por intent,
                 //el listado de dispositovos encontrados
-                /*Intent newIntent = new Intent(BTActivity.this, DeviceListActivity.class);
+                Intent newIntent = new Intent(BTActivity.this, DeviceListActivity.class);
 
                 newIntent.putParcelableArrayListExtra("device.list", mDeviceList);
 
-                startActivity(newIntent);*/
+                startActivity(newIntent);
             }
             //si se encontro un dispositivo bluethoot
             else if (BluetoothDevice.ACTION_FOUND.equals(action))

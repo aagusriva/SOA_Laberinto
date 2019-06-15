@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class BluetoothListAdapter extends BaseAdapter {
 
-    public static final String btCarName = "HC-06";
+    public static final String btCarName = "LSmart_BT";
 
     private Context context;
     private int layout;
@@ -33,7 +33,7 @@ public class BluetoothListAdapter extends BaseAdapter {
             if(btDevices.get(i).getName().equals(BluetoothListAdapter.btCarName) && i!=0) {
                 btDevices.set(0, btDevices.get(i));
                 btDevices.remove(i);
-                i=90; //re villero
+                i=90;
             }
 
         //this.btDevices = new ArrayList<BluetoothDevice>(btDevices);

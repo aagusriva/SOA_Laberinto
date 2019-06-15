@@ -1,50 +1,82 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="#08FFFFFF"
     android:orientation="vertical"
-    android:padding="@dimen/activity_vertical_margin"
-    >
+    android:padding="@dimen/activity_vertical_margin">
 
     <TextView
         android:id="@+id/txtEstado"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:textSize="18sp"
+        android:text="Conexión a Bluetooth"
         android:textColor="#47A31A"
-        android:text="Conexión a Bluetooth" />
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.045" />
 
     <Button
         android:id="@+id/btnActivar"
-        android:textColor="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="#01258F"
+        android:text="Activar"
+        android:textColor="#FFFFFF"
         android:textSize="18sp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="Activar" />
+        app:layout_constraintBottom_toTopOf="@+id/btnEmparejar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEstado" />
 
     <Button
         android:id="@+id/btnEmparejar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="48dp"
         android:backgroundTint="#01258F"
-        android:textSize="18sp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:enabled="false"
-        android:text="Ver dispositivos emparejados" />
+        android:text="Ver dispositivos emparejados"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnBuscar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnBuscar"
-        android:textColor="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="#01258F"
-        android:textSize="18sp"
         android:enabled="false"
-        android:text="Buscar Dispositivos" />
+        android:text="Buscar Dispositivos"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.51" />
 
-</LinearLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>
