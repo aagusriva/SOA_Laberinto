@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.laberintosmart.R;
@@ -54,6 +55,7 @@ public class activity_comunicacion extends Activity
         btnApagar=(Button)findViewById(R.id.btnApagar);
         btnEncender=(Button)findViewById(R.id.btnEncender);
         txtPotenciometro=(TextView)findViewById(R.id.txtValorPotenciometro);
+        final Chronometer myChronometer = (Chronometer)findViewById(R.id.chronometer);
 
         //obtengo el adaptador del bluethoot
         btAdapter = BluetoothAdapter.getDefaultAdapter();
