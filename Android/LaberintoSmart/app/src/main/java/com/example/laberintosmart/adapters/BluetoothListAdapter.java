@@ -19,7 +19,8 @@ import java.util.Set;
 
 public class BluetoothListAdapter extends BaseAdapter {
 
-    public static final String btCarName = "LSmart_BT";
+    //public static final String btCarName = "LSmart_BT";
+    public static final String btCarName = "Agustin Riva";
 
     private Context context;
     private int layout;

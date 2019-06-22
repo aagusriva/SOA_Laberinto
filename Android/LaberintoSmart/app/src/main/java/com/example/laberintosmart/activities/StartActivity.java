@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,15 +35,22 @@ import java.util.List;
 
 public class StartActivity extends AppCompatActivity implements SensorEventListener{
 
+    //Variables
     private Registro registro;
+    private boolean modoManual;
+    private boolean posicionRecta;
+    private boolean recorridoOptimizado;
+    private boolean ledDataSent;
 
     //Componentes UI
     private Button finalizar;
     private Button btnHome;
+    private Button btnOptimize;
     private TextView txtModo;
     private TextView txtEstado;
-    private boolean modoManual;
     private Chronometer myChronometer;
+    private ImageView iconResult;
+    private ProgressBar progressBar;
 
     //Bluetooth connection
     private BluetoothAdapter btAdapter;
@@ -63,6 +72,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
     Sensor sensorProx;
     Sensor sensorAcelerometro;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,10 +83,19 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
         btnHome = findViewById(R.id.btn_start_home);
         btnHome.setVisibility(View.GONE);
         btnHome.setActivated(false);
+        btnOptimize.setVisibility(View.GONE);
+        btnOptimize.setActivated(false);
         txtModo = findViewById(R.id.txtModo);
         txtEstado = findViewById(R.id.start_state);
         myChronometer = (Chronometer)findViewById(R.id.chronometer);
+        iconResult = findViewById(R.id.iconResult);
+        iconResult.setVisibility(View.INVISIBLE);
+        progressBar = findViewById(R.id.indeterminateBar);
 
+        //Variables
+        posicionRecta = false;
+        recorridoOptimizado = false;
+        ledDataSent = false;
 
         //BT MSG
         bluetoothIn = Handler_Msg_Hilo_Principal();
@@ -96,6 +115,9 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
         super.onStart();
 
         modoManual = (boolean)getIntent().getExtras().get("modoManual");
+
+        if(modoManual)
+            btnOptimize.setText("APRENDER RECORRIDO");
 
         configBluetooth();
 
@@ -126,6 +148,22 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
             }
         });
 
+        btnOptimize.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnOptimize.setVisibility(View.GONE);
+                btnOptimize.setActivated(false);
+                if(modoManual)
+                    outerWrite(Directiva.APRENDER_RECORRIDO);
+                else
+                    outerWrite(Directiva.OPTIMIZAR_RECORRIDO);
+                recorridoOptimizado = true;
+                iconResult.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
+                crearRegistro();
+            }
+        });
+
         crearRegistro();
     }
 
@@ -135,7 +173,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
 
     public void terminarRegistro(Estado estado){
         myChronometer.stop();
-        outerWrite(Directiva.FRENAR);
+        outerWrite(Directiva.DETENERSE);
         registro.calcularDuracion();
         registro.setEstado(estado);
         registro.guardarRegistro(getApplicationContext());
@@ -216,18 +254,36 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
                     //SI ARDUINO NO MANDA OTRA SENAL MAS QUE ESTAS DOS SE PUEDE PONER EL CODIGO DE BOTONES APARTE
                     if(readMessage.equals(Directiva.RESUELTO)) {
                         txtEstado.setText("RESUELTO");
+
+                        //Ocultar y mostrar botones
                         finalizar.setVisibility(View.GONE);
                         finalizar.setActivated(false);
                         btnHome.setVisibility(View.VISIBLE);
                         btnHome.setActivated(true);
+                        if(!recorridoOptimizado) {
+                            btnOptimize.setVisibility(View.VISIBLE);
+                            btnOptimize.setActivated(true);
+                        }
+
+                        //Ocultar y mostrar iconos
+                        if(recorridoOptimizado)
+                            iconResult.setImageResource(R.drawable.happy);
+                        else
+                            iconResult.setImageResource(R.drawable.smile);
+                        iconResult.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.INVISIBLE);
+
+                        //Finalizar registro
                         terminarRegistro(Estado.SUCCESS);
                     }   else if(readMessage.equals(Directiva.BLOQUEADO)){
                         txtEstado.setText("BLOQUEADO");
-                        finalizar.setVisibility(View.GONE);
-                        finalizar.setActivated(false);
-                        btnHome.setVisibility(View.VISIBLE);
-                        btnHome.setActivated(true);
-                        terminarRegistro(Estado.BLOCKED);
+
+                        iconResult.setImageResource(R.drawable.sad);
+                        iconResult.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }   else if(readMessage.equals(Directiva.NO_BLOQUEADO)){
+                        iconResult.setVisibility(View.INVISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -250,7 +306,14 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
     }
 
     public void onLightChange(SensorEvent event){
-
+        if(event.values[0] < 2 && !ledDataSent) {
+            outerWrite(Directiva.ENCENDER_LED);
+            ledDataSent = true;
+        }
+        else if(event.values[0] > 4 && ledDataSent) {
+            outerWrite(Directiva.APAGAR_LED);
+            ledDataSent = false;
+        }
     }
 
     public void onProximityChange(SensorEvent event){
@@ -260,7 +323,10 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
             outerWrite(Directiva.FRENAR);
         }else{
             txtEstado.setText("RESOLVIENDO");
-            outerWrite(Directiva.ARRANCAR);
+            if(modoManual)
+                outerWrite(Directiva.INICIAR_MANUAL);
+            else
+                outerWrite(Directiva.INICIAR_AUTOMATICO);
         }
     }
 
@@ -269,12 +335,17 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
             return;
         float x = event.values[0];
         float z = event.values[2];
-        if(x<-6) {
+        if(x<-6 && posicionRecta) {
+            posicionRecta = false;
             outerWrite(Directiva.DERECHA);
-        }else if(x>6){
+        }else if(x>6 && posicionRecta){
+            posicionRecta = false;
             outerWrite(Directiva.IZQUIERDA);
-        }else if( z >= 6){
+        }else if( z >= 6 && posicionRecta){
+            posicionRecta = false;
             outerWrite(Directiva.CONTINUAR);
+        } else if(x>-2 && x<2 && z<2 && z>-2){
+            posicionRecta=true;
         }
     }
 
