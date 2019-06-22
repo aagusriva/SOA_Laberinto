@@ -134,9 +134,13 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
             @Override
             public void onClick(View v) {
                 terminarRegistro(Estado.TERMINATED);
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                //intent.putExtra("Registro", "registro");
-                startActivity(intent);
+                iconResult.setImageResource(R.drawable.smile);
+                iconResult.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
+                finalizar.setVisibility(View.GONE);
+                finalizar.setActivated(false);
+                btnHome.setVisibility(View.VISIBLE);
+                btnHome.setActivated(true);
             }
         });
 
