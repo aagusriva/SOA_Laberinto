@@ -35,6 +35,12 @@ import java.util.List;
 
 public class StartActivity extends AppCompatActivity implements SensorEventListener{
 
+    //DEBUG**************
+    private TextView luz;
+    private TextView acelerom;
+    private TextView prox;
+    private TextView btLetter;
+
     //Variables
     private Registro registro;
     private boolean modoManual;
@@ -78,11 +84,18 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
+        //DEBUG******************
+        acelerom = findViewById(R.id.acelerom);
+        luz = findViewById(R.id.luz);
+        prox = findViewById(R.id.prox);
+        btLetter = findViewById(R.id.bt_letter);
+
         //Componentes UI
         finalizar = (Button) findViewById(R.id.start_end);
         btnHome = findViewById(R.id.btn_start_home);
         btnHome.setVisibility(View.GONE);
         btnHome.setActivated(false);
+        btnOptimize = findViewById(R.id.btn_optimize);
         btnOptimize.setVisibility(View.GONE);
         btnOptimize.setActivated(false);
         txtModo = findViewById(R.id.txtModo);
@@ -128,7 +141,6 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
         sensorManager.registerListener(this, sensorProx, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, sensorAcelerometro, SensorManager.SENSOR_DELAY_UI);
 
-        myChronometer.start();
 
         finalizar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +153,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
                 finalizar.setActivated(false);
                 btnHome.setVisibility(View.VISIBLE);
                 btnHome.setActivated(true);
+                txtEstado.setText("FINALIZADO");
             }
         });
 
@@ -157,6 +170,10 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
             public void onClick(View v) {
                 btnOptimize.setVisibility(View.GONE);
                 btnOptimize.setActivated(false);
+                btnHome.setVisibility(View.GONE);
+                btnHome.setActivated(false);
+                finalizar.setVisibility(View.VISIBLE);
+                finalizar.setActivated(true);
                 if(modoManual)
                     outerWrite(Directiva.APRENDER_RECORRIDO);
                 else
@@ -169,6 +186,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
         });
 
         crearRegistro();
+        myChronometer.start();
     }
 
     public void crearRegistro(){
@@ -204,6 +222,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
             btListener.start();
         } catch (IOException e) {
             e.printStackTrace();
+            finish();
         }
     }
 
@@ -254,9 +273,9 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
                 if (msg.what == handlerState)
                 {
                     String readMessage = (String) msg.obj;
-
+                    btLetter.setText("BT: " + readMessage);
                     //SI ARDUINO NO MANDA OTRA SENAL MAS QUE ESTAS DOS SE PUEDE PONER EL CODIGO DE BOTONES APARTE
-                    if(readMessage.equals(Directiva.RESUELTO)) {
+                    if(readMessage.contains(Directiva.RESUELTO)) {
                         txtEstado.setText("RESUELTO");
 
                         //Ocultar y mostrar botones
@@ -286,8 +305,9 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
                         iconResult.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.INVISIBLE);
                     }   else if(readMessage.equals(Directiva.NO_BLOQUEADO)){
-                        iconResult.setVisibility(View.INVISIBLE);
+                        iconResult.setVisibility(View.GONE);
                         progressBar.setVisibility(View.VISIBLE);
+                        txtEstado.setText("RESOLVIENDO");
                     }
                 }
             }
@@ -310,6 +330,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
     }
 
     public void onLightChange(SensorEvent event){
+        luz.setText("LUZ: ");
         if(event.values[0] < 2 && !ledDataSent) {
             outerWrite(Directiva.ENCENDER_LED);
             ledDataSent = true;
@@ -322,19 +343,22 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
 
     public void onProximityChange(SensorEvent event){
         float x = event.values[0];
-        if( x < sensorProx.getMaximumRange() - 3) {
+        prox.setText("PROX: " + x);
+        if( x < sensorProx.getMaximumRange()) {
             txtEstado.setText("FRENADO");
             outerWrite(Directiva.FRENAR);
         }else{
             txtEstado.setText("RESOLVIENDO");
-            if(modoManual)
-                outerWrite(Directiva.INICIAR_MANUAL);
-            else
-                outerWrite(Directiva.INICIAR_AUTOMATICO);
+            //if(modoManual)
+            //    outerWrite(Directiva.INICIAR_MANUAL);
+            //else
+            //    outerWrite(Directiva.INICIAR_AUTOMATICO);
+            outerWrite(Directiva.REANUDAR);
         }
     }
 
     public void onAccelerometerChange(SensorEvent event){
+        luz.setText("AC - X:" + ((int) event.values[0]) +" Y:" + ((int)event.values[1]) + " Z:" +((int)event.values[2]));
         if(!modoManual)
             return;
         float x = event.values[0];

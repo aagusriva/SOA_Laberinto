@@ -4,7 +4,7 @@
     <string name="title_register">Registros</string>
     <string name="title_information">Info</string>
     <string name="btn_start">Iniciar</string>
-    <string name="btn_test">Comprobar conexión</string>
+    <string name="btn_test">Conectar con dispositivo</string>
     <string name="btn_finish">Terminar</string>
     <string name="resolving">Resolviendo Laberinto</string>
     <string name="state">Estado:</string>

@@ -20,6 +20,7 @@ public class Directiva {
     public static final String INICIAR_AUTOMATICO = "S";
     public static final String OPTIMIZAR_RECORRIDO = "O";
     public static final String APRENDER_RECORRIDO = "L";
+    public static final String REANUDAR = "Z";
 
     //Tipos de transmiciones
     public static final String RESUELTO = "F";

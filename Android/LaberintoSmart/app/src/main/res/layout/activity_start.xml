@@ -13,17 +13,15 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:backgroundTint="#F8578A"
         android:text="OPTIMIZAR RECORRIDO"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/start_title"
-        app:layout_constraintVertical_bias="0.659" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_start_home"
+        app:layout_constraintVertical_bias="0.22000003" />
 
     <ProgressBar
         android:id="@+id/indeterminateBar"
@@ -38,7 +36,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.127" />
+        app:layout_constraintVertical_bias="0.100000024" />
 
     <TextView
         android:id="@+id/start_title"
@@ -74,7 +72,7 @@
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_title"
-        app:layout_constraintVertical_bias="0.826" />
+        app:layout_constraintVertical_bias="0.7" />
 
     <Button
         android:id="@+id/btn_start_home"
@@ -93,14 +91,14 @@
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_title"
-        app:layout_constraintVertical_bias="0.826" />
+        app:layout_constraintVertical_bias="0.7" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:text="@string/state"
         android:textSize="18sp"
@@ -115,7 +113,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:text="-"
         android:textSize="18sp"
@@ -152,7 +150,7 @@
         app:layout_constraintHorizontal_bias="0.69"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.22000003" />
+        app:layout_constraintVertical_bias="0.24000001" />
 
 <!--
     <ProgressBar
@@ -193,14 +191,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="42dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="-"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_start_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.67"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chronometer" />
+        app:layout_constraintTop_toBottomOf="@+id/chronometer"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/iconResult"
@@ -215,8 +216,50 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.125"
+        app:layout_constraintVertical_bias="0.100000024"
         app:srcCompat="@drawable/happy" />
+
+    <TextView
+        android:id="@+id/prox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/acelerom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/luz"
+        app:layout_constraintStart_toEndOf="@+id/prox" />
+
+    <TextView
+        android:id="@+id/luz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/bt_letter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="14dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/prox"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
