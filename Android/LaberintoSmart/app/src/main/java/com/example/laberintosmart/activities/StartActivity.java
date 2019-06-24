@@ -36,10 +36,10 @@ import java.util.List;
 public class StartActivity extends AppCompatActivity implements SensorEventListener{
 
     //DEBUG**************
-    private TextView luz;
-    private TextView acelerom;
-    private TextView prox;
-    private TextView btLetter;
+    //private TextView luz;
+    //private TextView acelerom;
+    //private TextView prox;
+    //private TextView btLetter;
 
     //Variables
     private Registro registro;
@@ -85,10 +85,10 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
         setContentView(R.layout.activity_start);
 
         //DEBUG******************
-        acelerom = findViewById(R.id.acelerom);
-        luz = findViewById(R.id.luz);
-        prox = findViewById(R.id.prox);
-        btLetter = findViewById(R.id.bt_letter);
+        //acelerom = findViewById(R.id.acelerom);
+        //luz = findViewById(R.id.luz);
+        //prox = findViewById(R.id.prox);
+        //btLetter = findViewById(R.id.bt_letter);
 
         //Componentes UI
         finalizar = (Button) findViewById(R.id.start_end);
@@ -227,6 +227,8 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
     }
 
     public void setModoDeEjecucion(){
+        if(outputStream == null)
+            return;
         if(modoManual) {
             txtModo.setText("MANUAL");
             outerWrite(Directiva.INICIAR_MANUAL);
@@ -273,7 +275,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
                 if (msg.what == handlerState)
                 {
                     String readMessage = (String) msg.obj;
-                    btLetter.setText("BT: " + readMessage);
+                    //btLetter.setText("BT: " + readMessage);
                     //SI ARDUINO NO MANDA OTRA SENAL MAS QUE ESTAS DOS SE PUEDE PONER EL CODIGO DE BOTONES APARTE
                     if(readMessage.contains(Directiva.RESUELTO)) {
                         txtEstado.setText("RESUELTO");
@@ -330,7 +332,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
     }
 
     public void onLightChange(SensorEvent event){
-        luz.setText("LUZ: ");
+        //luz.setText("LUZ: ");
         if(event.values[0] < 2 && !ledDataSent) {
             outerWrite(Directiva.ENCENDER_LED);
             ledDataSent = true;
@@ -343,7 +345,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
 
     public void onProximityChange(SensorEvent event){
         float x = event.values[0];
-        prox.setText("PROX: " + x);
+        //prox.setText("PROX: " + x);
         if( x < sensorProx.getMaximumRange()) {
             txtEstado.setText("FRENADO");
             outerWrite(Directiva.FRENAR);
@@ -358,7 +360,7 @@ public class StartActivity extends AppCompatActivity implements SensorEventListe
     }
 
     public void onAccelerometerChange(SensorEvent event){
-        luz.setText("AC - X:" + ((int) event.values[0]) +" Y:" + ((int)event.values[1]) + " Z:" +((int)event.values[2]));
+        //luz.setText("AC - X:" + ((int) event.values[0]) +" Y:" + ((int)event.values[1]) + " Z:" +((int)event.values[2]));
         if(!modoManual)
             return;
         float x = event.values[0];
