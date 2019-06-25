@@ -1,14 +1,15 @@
-int primero = 0;
+char laberinto_path[100] = "";
+unsigned char laberinto_longitud = 0;
+int laberinto_indice = 0;
+char band_inicio = 'N';
+char band_manual = 'N';
+int z;
+int estaParado = 0;
 
-//Infrarrojo
-int entroAUnIf = 0;
-int estaGirandoEnU = 0;
-int estaGirandoEnUSuave = 0;
-int estaGirandoIzquierda = 0;
-int estaGirandoIzquierdaSuave = 0;
-int estaGirandoDerecha = 0;
-int estaGirandoDerechaSuave = 0;
+//Led
+#define ledPin 2
 
+//Movimientos
 #define GO_AHEAD 1
 #define TURN_RIGHT 2
 #define TURN_LEFT 3
@@ -21,49 +22,50 @@ int estaGirandoDerechaSuave = 0;
 #define TURN_U 10
 #define TURN_U_SOFT 11
 #define STOP 12
+#define TURN_RIGHT_MANUAL 13
+#define TURN_LEFT_MANUAL 14
 
-/*
-int infraPin1 = 7;
-*/
+//Infrarrojo
 int valorCI = 0;
 int valorCD = 0;
 int valorEI = 0;
 int valorED = 0;
-int valorEC = 0;
+#define sensorCI 1
+#define sensorCD 2
+#define sensorEI 3
+#define sensorED 4
 
 //Motores
-//Motor A
-int pinENA = 10;
-int pinIN1 = 9;
-int pinIN2 = 8;
-//Motor B
-int pinIN3 = 7;
-int pinIN4 = 6;
-int pinENB = 5;
+//Motor izquierda
+#define pinENA 10
+#define pinIN1 9
+#define pinIN2 8
+//Motor derecha
+#define pinIN3 7
+#define pinIN4 6
+#define pinENB 5
 
 
 //Ultrasonido
-long t; //timepo que demora en llegar el eco
+long t; //tiempo que demora en llegar el eco
 long d; //distancia en centimetros
-int paradoPorObjeto = 0;
-
-int pinUltraSonidoTrig = 3;
-int pinUltraSonidoEcho = 4;
+int finalizoLaberinto = 0;
+#define pinUltraSonidoTrig  3
+#define pinUltraSonidoEcho  4
 
 
 //Bluethoot
 #include <SoftwareSerial.h>
-int txBT = 12;
-int rxBT = 11;
+#define txBT 12
+#define rxBT 11
 char mensajeBT;
 SoftwareSerial BT1(txBT,rxBT);
 
 void setup() {
   Serial.begin(9600); // Comenzamos comunicacion serial.
-  
-  //Infrarrojo
-  /*pinMode (infraPin1, INPUT);
-  */
+
+  //LED
+  pinMode(ledPin , OUTPUT); 
   
   //Motor
   pinMode (pinENA, OUTPUT);
@@ -73,191 +75,616 @@ void setup() {
   pinMode (pinIN3, OUTPUT);
   pinMode (pinIN4, OUTPUT);
   
-  
   //Ultrasonido
   pinMode(pinUltraSonidoTrig, OUTPUT); //pin como salida
   pinMode(pinUltraSonidoEcho, INPUT);  //pin como entrada
   digitalWrite(pinUltraSonidoTrig, LOW);//Inicializamos el pin con 0
 
   //Bluethoot
-  Serial.println("Enter AT commands:");
   BT1.begin(9600);
 }
 
-void loop() {
-  //Infrarrojo
-  /*valorInfra1 = digitalRead(infraPin1);*/
-  valorCI = analogRead(1); //Centro Izquierda
-  valorCD = analogRead(2); //Centro Derecha
-  valorEI = analogRead(3); //Exterior Izquierda
-  valorED = analogRead(4); //Exterior Derecha
-  valorEC = analogRead(5); //Extremo Centro
-  /*Serial.print(valorEI);
-  Serial.print("\t");
-  Serial.print(valorCI);
-  Serial.print("\t");
-  Serial.print(valorCD);
-  Serial.print("\t");
-  Serial.print(valorED);
-  Serial.print("\t\t");
-  Serial.print(valorEC);
-  Serial.println("");
-  delay(500);*/
-  
-  if(primero == 0){
-    delay(5000);
-    primero = 1;
+void loop() {  
+  while(band_inicio != 'B' && band_inicio != 'T' && band_inicio != 'F' && band_inicio != 'M' && band_inicio != 'L' && band_inicio != 'O' && band_inicio != 'S'){
+    if (BT1.available()){
+      band_inicio = BT1.read();
+    }
   }
   
-  //Medidor de distancia
-  /*if(estaGirandoEnU == 0 && girandoIzquierda == 0 && girandoDerecha == 0){
-    digitalWrite(pinUltraSonidoTrig, HIGH);
-    delayMicroseconds(10);          //Enviamos un pulso de 10us
-    digitalWrite(pinUltraSonidoTrig, LOW);
-    
-    t = pulseIn(pinUltraSonidoEcho, HIGH); //obtenemos el ancho del pulso
-    d = t/59;             //escalamos el tiempo a una distancia en cm
-  
-    if(d <= 20){
-      moverRobot(STOP);
-      paradoPorObjeto = 1;
+  if(band_inicio != 'T' && band_inicio != 'F' && band_inicio != 'M' && band_inicio != 'L' && band_inicio != 'O' && band_inicio != 'S'){
+    encender_led();
+    band_inicio = 'N';
+  }else if(band_inicio != 'B' && band_inicio != 'F' && band_inicio != 'M' && band_inicio != 'L' && band_inicio != 'O' && band_inicio != 'S'){
+    apagar_led();
+    band_inicio = 'N';
+  }else if(band_inicio != 'B' && band_inicio != 'T' && band_inicio != 'M' && band_inicio != 'L' && band_inicio != 'O' && band_inicio != 'S'){
+    band_inicio = 'N';
+  }else if(band_inicio != 'B' && band_inicio != 'T' && band_inicio != 'F' && band_inicio != 'L' && band_inicio != 'O' && band_inicio != 'S'){
+    //Entramos en el modo Manual
+    for(z=0;z<100;z++){
+      laberinto_path[z] = 'Z';
+    }
+    laberinto_longitud = 0;
+    laberinto_indice = 0;
+    while(band_inicio != 'F'){
+      if(band_inicio == 'B'){
+        encender_led();
+      }
+      if(band_inicio == 'T'){
+        apagar_led();
+      }
+      if(band_inicio == 'P'){
+        //Debo frenar por lectura de sensor
+        moverRobot(STOP);
+      }else{
+        digitalWrite(pinUltraSonidoTrig, HIGH);
+        delayMicroseconds(10);//Enviamos un pulso de 10us
+        digitalWrite(pinUltraSonidoTrig, LOW);
+        
+        t = pulseIn(pinUltraSonidoEcho, HIGH);//obtenemos el ancho del pulso
+        d = t/59;//escalamos el tiempo a una distancia en cm
+      
+        if(d <= 10){
+          if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) <= 100 && analogRead(sensorEI) <= 100 && analogRead(sensorED) <= 100){
+            //Llego al final del camino
+            moverRobot(STOP);
+            BT1.print('F');
+            BT1.print('\n');
+            band_inicio = 'F';
+          }else{
+            //Esta parado por un objeto
+            moverRobot(STOP);
+            //Aca debemos mandar un aviso por bluethoot de que esta parado por un objeto y no puede continuar
+            if(estaParado == 0){
+              BT1.print('P');
+              BT1.print('\n');
+              estaParado = 1;
+            }
+          }
+        }else{
+          if(estaParado == 1){
+            estaParado = 0;
+            BT1.print('J');
+            BT1.print('\n');
+          }
+          if(analogRead(sensorEI) <= 100){
+            if(analogRead(sensorED) <= 100){
+              while(analogRead(sensorED) <= 100);
+              if(analogRead(sensorCI) <= 100 || analogRead(sensorCD) <= 100){
+                //Encontramos la combinacion I-A-D
+                moverRobot(STOP);
+                band_manual = recibir_senal(4);
+                if(band_manual == 'I'){
+                  girarIzquierda(1);
+                }else if(band_manual == 'D'){
+                  girarDerecha(1);
+                }else{
+                  seguirAdelante(1);
+                }
+                band_manual = 'N';
+              }else{
+                //Encontramos la combinacion I-D
+                moverRobot(STOP);
+                band_manual = recibir_senal(3);
+                if(band_manual == 'I'){
+                  girarIzquierda(1);
+                }else{
+                  girarDerecha(1);
+                }
+                band_manual = 'N';
+              }
+            }else{
+              while(analogRead(sensorEI) <= 100);
+              if(analogRead(sensorCI) <= 100 || analogRead(sensorCD) <= 100){
+                //Encontramos la combinacion I-A
+                moverRobot(STOP);
+                band_manual = recibir_senal(1);
+                if(band_manual == 'I'){
+                  girarIzquierda(1);
+                }else{
+                  seguirAdelante(1);
+                }
+                band_manual = 'N';
+              }else{
+                //Solo puede ir a la izquierda y lo hace
+                girarIzquierda(1);
+              }
+            }
+          }else if(analogRead(sensorED) <= 100){
+            while(analogRead(sensorED) <= 100);
+            if(analogRead(sensorCI) <= 100 || analogRead(sensorCD) <= 100){
+              //Encontramos la combinacion A-D
+              moverRobot(STOP);
+              band_manual = recibir_senal(2);
+              if(band_manual == 'D'){
+                girarDerecha(1);
+              }else{
+                seguirAdelante(1);
+              }
+              band_manual = 'N';
+            }else{
+              //Solo puede ir a la derecha y lo hace
+              girarDerecha(1);
+            }
+          }else if(analogRead(sensorEI) > 100 && analogRead(sensorED) > 100 && analogRead(sensorCI) > 100 && analogRead(sensorCD) > 100){
+            //Todos en blanco, girar en U
+            girarEnU(1);
+          }else{
+            //Solo linea para adelante, seguir derecho
+            if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) > 100){
+              moverRobot(ADAPT_LEFT_SOFT);
+              delay(2);
+            }else if(analogRead(sensorCI) > 100 && analogRead(sensorCD) <= 100){
+              moverRobot(ADAPT_RIGHT_SOFT);
+              delay(2);
+            }else{
+              moverRobot(GO_AHEAD);
+            }
+          }
+        }
+      }
+      //Leo por si recibo alguna señal de que debemos parar por lectura del sensor de distancia
+      if (BT1.available()){
+        band_inicio = BT1.read();
+        if(band_inicio == 'F'){
+          moverRobot(STOP);
+        }
+      }
+    }
+    imprimirCaminoSimplificado();
+  }else if(band_inicio != 'B' && band_inicio != 'T' && band_inicio != 'F' && band_inicio != 'M' && band_inicio != 'S' && band_inicio != 'L'){
+    //Entramos en el modo Optimizado
+    laberinto_indice = 0;
+    while(band_inicio != 'F'){
+      if(band_inicio == 'B'){
+        encender_led();
+      }
+      if(band_inicio == 'T'){
+        apagar_led();
+      }
+      if(band_inicio == 'P'){
+        //Debo frenar por lectura de sensor
+        moverRobot(STOP);
+      }else{
+        digitalWrite(pinUltraSonidoTrig, HIGH);
+        delayMicroseconds(10);//Enviamos un pulso de 10us
+        digitalWrite(pinUltraSonidoTrig, LOW);
+        
+        t = pulseIn(pinUltraSonidoEcho, HIGH);//obtenemos el ancho del pulso
+        d = t/59;//escalamos el tiempo a una distancia en cm
+      
+        if(d <= 10){
+          if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) <= 100 && analogRead(sensorEI) <= 100 && analogRead(sensorED) <= 100){
+            //Llego al final del camino
+            moverRobot(STOP);
+            BT1.print('F');
+            BT1.print('\n');
+            band_inicio = 'F';
+          }else{
+            //Esta parado por un objeto
+            moverRobot(STOP);
+            //Aca debemos mandar un aviso por bluethoot de que esta parado por un objeto y no puede continuar
+            if(estaParado == 0){
+              BT1.print('P');
+              BT1.print('\n');
+              estaParado = 1;
+            }
+          }
+        }else{
+          if(estaParado == 1){
+            estaParado = 0;
+            BT1.print('J');
+            BT1.print('\n');
+          }
+          if(analogRead(sensorEI) <= 100 || analogRead(sensorED) <= 100){
+            band_manual = sacar_path();
+            if(band_manual == 'I'){
+              girarIzquierda(2);
+            }else if(band_manual == 'D'){
+              girarDerecha(2);
+            }else{
+              seguirAdelante(2);
+            }
+            band_manual = 'N';
+          }else{
+            //Solo linea para adelante, seguir derecho
+            if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) > 100){
+              moverRobot(ADAPT_LEFT_SOFT);
+              delay(2);
+            }else if(analogRead(sensorCI) > 100 && analogRead(sensorCD) <= 100){
+              moverRobot(ADAPT_RIGHT_SOFT);
+              delay(2);
+            }else{
+              moverRobot(GO_AHEAD);
+            }
+          }
+        }
+      }
+      //Leo por si recibo alguna señal de que debemos parar por lectura del sensor de distancia
+      if (BT1.available()){
+        band_inicio = BT1.read();
+        if(band_inicio == 'F'){
+          moverRobot(STOP);
+        }
+      }
+    }
+  }else if(band_inicio != 'B' && band_inicio != 'T' && band_inicio != 'F' && band_inicio != 'M' && band_inicio != 'S' && band_inicio != 'O'){
+    //Entramos en el modo Aprender (Learning)
+    laberinto_indice = 0;
+    while(band_inicio != 'F'){
+      if(band_inicio == 'B'){
+        encender_led();
+      }
+      if(band_inicio == 'T'){
+        apagar_led();
+      }
+      if(band_inicio == 'P'){
+        //Debo frenar por lectura de sensor
+        moverRobot(STOP);
+      }else{
+        digitalWrite(pinUltraSonidoTrig, HIGH);
+        delayMicroseconds(10);//Enviamos un pulso de 10us
+        digitalWrite(pinUltraSonidoTrig, LOW);
+        
+        t = pulseIn(pinUltraSonidoEcho, HIGH);//obtenemos el ancho del pulso
+        d = t/59;//escalamos el tiempo a una distancia en cm
+      
+        if(d <= 10){
+          if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) <= 100 && analogRead(sensorEI) <= 100 && analogRead(sensorED) <= 100){
+            //Llego al final del camino
+            moverRobot(STOP);
+            BT1.print('F');
+            BT1.print('\n');
+            band_inicio = 'F';
+          }else{
+            //Esta parado por un objeto
+            moverRobot(STOP);
+            //Aca debemos mandar un aviso por bluethoot de que esta parado por un objeto y no puede continuar
+            if(estaParado == 0){
+              BT1.print('P');
+              BT1.print('\n');
+              estaParado = 1;
+            }
+          }
+        }else{
+          if(estaParado == 1){
+            estaParado = 0;
+            BT1.print('J');
+            BT1.print('\n');
+          }
+          if(analogRead(sensorEI) <= 100 || analogRead(sensorED) <= 100){
+            band_manual = sacar_path();
+            if(band_manual == 'I'){
+              girarIzquierda(2);
+            }else if(band_manual == 'D'){
+              girarDerecha(2);
+            }else{
+              seguirAdelante(2);
+            }
+            band_manual = 'N';
+          }else if(analogRead(sensorCI) <= 100 || analogRead(sensorCD) <= 100){
+            if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) > 100){
+              moverRobot(ADAPT_LEFT_SOFT);
+              delay(2);
+            }else if(analogRead(sensorCI) > 100 && analogRead(sensorCD) <= 100){
+              moverRobot(ADAPT_RIGHT_SOFT);
+              delay(2);
+            }else{
+              moverRobot(GO_AHEAD);
+            }
+          }else{
+            girarEnU(2);
+          }
+        }
+      }
+      //Leo por si recibo alguna señal de que debemos parar por lectura del sensor de distancia
+      if (BT1.available()){
+        band_inicio = BT1.read();
+        if(band_inicio == 'F'){
+          moverRobot(STOP);
+        }
+      }
+    }
+  }else if(band_inicio != 'B' && band_inicio != 'T' && band_inicio != 'F' && band_inicio != 'M' && band_inicio != 'L' && band_inicio != 'O'){
+    for(z=0;z<100;z++){
+      laberinto_path[z] = 'Z';
+    }
+    laberinto_longitud = 0;
+    laberinto_indice = 0;
+    //Entramos en el modo Automatico
+    while(band_inicio != 'F'){
+      if(band_inicio == 'B'){
+        encender_led();
+      }
+      if(band_inicio == 'T'){
+        apagar_led();
+      }
+      if(band_inicio == 'P'){
+        //Debo frenar por lectura de sensor
+        moverRobot(STOP);
+      }else{
+        digitalWrite(pinUltraSonidoTrig, HIGH);
+        delayMicroseconds(10);//Enviamos un pulso de 10us
+        digitalWrite(pinUltraSonidoTrig, LOW);
+        
+        t = pulseIn(pinUltraSonidoEcho, HIGH);//obtenemos el ancho del pulso
+        d = t/59;//escalamos el tiempo a una distancia en cm
+      
+        if(d <= 10){
+          if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) <= 100 && analogRead(sensorEI) <= 100 && analogRead(sensorED) <= 100){
+            //Llego al final del camino
+            moverRobot(STOP);
+            BT1.print('F');
+            BT1.print('\n');
+            band_inicio = 'F';
+          }else{
+            //Esta parado por un objeto
+            moverRobot(STOP);
+            if(estaParado == 0){
+              BT1.print('P');
+              BT1.print('\n');
+              estaParado = 1;
+            }
+          }
+        }else{
+          if(estaParado == 1){
+            estaParado = 0;
+            BT1.print('J');
+            BT1.print('\n');
+          }
+          if(analogRead(sensorEI) <= 100){
+            girarIzquierda(0);
+          }else if(analogRead(sensorED) <= 100){
+            //Lo hago avanzar hasta que deje de detectar la linea de la derecha
+            while(analogRead(sensorED) <= 100);
+            //Entonces pregunto si los de adelante son negros (alguno de los dos) y debe seguir adelante, sino girar a la derecha
+            if(analogRead(sensorCI) <= 100 || analogRead(sensorCD) <= 100){
+              BT1.print('A');
+              BT1.print('\n');
+              guardar_path('A',0);
+            }else{
+              girarDerecha(0);
+            }
+          }else if(analogRead(sensorCI) <= 100 || analogRead(sensorCD) <= 100){
+            if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) > 100){
+              moverRobot(ADAPT_LEFT_SOFT);
+              delay(2);
+            }else if(analogRead(sensorCI) > 100 && analogRead(sensorCD) <= 100){
+              moverRobot(ADAPT_RIGHT_SOFT);
+              delay(2);
+            }else{
+              moverRobot(GO_AHEAD);
+            }
+          }else{
+            //Todos los sensores detectan blanco, debemos girar en U
+            girarEnU(0);
+          }
+        }
+      }
+      //Leo por si recibo alguna señal de que debemos parar por lectura del sensor de distancia
+      if (BT1.available()){
+        band_inicio = BT1.read();
+        if(band_inicio == 'F'){
+          moverRobot(STOP);
+        }
+      }
+    }
+    imprimirCaminoSimplificado();
+  }
+}
+
+void encender_led(){
+  digitalWrite(ledPin , HIGH);
+}
+
+void apagar_led(){
+  digitalWrite(ledPin , LOW);
+}
+
+char recibir_senal(int combinacion){
+  char band_rx = 'N';
+  BT1.print('R');
+  BT1.print('\n');
+  while(band_rx != 'I' && band_rx != 'A' && band_rx != 'D'){
+    if (BT1.available()){
+      band_rx = BT1.read();
+      if(combinacion == 1){
+        if(band_rx == 'D'){
+          //Solo puede recibir I o A
+          band_rx = 'N';
+        }
+      }else if(combinacion == 2){
+        if(band_rx == 'I'){
+          //Solo puede recibir A o D
+          band_rx = 'N';
+        }
+      }else if(combinacion == 3){
+        if(band_rx == 'A'){
+          //Solo puede recibir I o D
+          band_rx = 'N';
+        }
+      }
+      //Si la combinacion es la 4, no preguntamos nada porque cualquier cosa que recibamos (I, A o D) sirve 
+      if(band_rx == 'B'){
+        encender_led();
+        band_rx = 'N';
+      }
+      if(band_rx == 'T'){
+        apagar_led();
+        band_rx = 'N';
+      }
+    }
+  }
+  return band_rx;
+}
+
+void girarEnU(int manual){
+  moverRobot(STOP);
+  if(manual != 2){
+    guardar_path('U', manual);
+  }
+  BT1.print('U');
+  BT1.print('\n');
+  delay(100);
+  moverRobot(TURN_RIGHT);
+  delay(500);
+  while(analogRead(sensorCI) > 100 && analogRead(sensorCD) > 100){
+    moverRobot(TURN_RIGHT_SOFT);
+  }
+  moverRobot(STOP);
+  delay(300);
+}
+void girarIzquierda(int manual){
+  int velocidad;
+  if(manual != 1){
+    velocidad = TURN_LEFT;
+  }else{
+    velocidad = TURN_LEFT_MANUAL;
+  }
+  delay(100);//100
+  moverRobot(STOP);
+  if(manual != 2){
+    guardar_path('I', manual);
+  }
+  BT1.print('I');
+  BT1.print('\n');
+  delay(100);
+  moverRobot(velocidad);
+  delay(500);
+  while(analogRead(sensorCI) > 100 && analogRead(sensorCD) > 100){
+    moverRobot(TURN_LEFT_SOFT);
+  }
+  moverRobot(STOP);
+  delay(300);
+}
+
+void girarDerecha(int manual){
+  int velocidad;
+  if(manual != 1){
+    velocidad = TURN_RIGHT;
+  }else{
+    velocidad = TURN_RIGHT_MANUAL;
+  }
+  delay(100);//100
+  moverRobot(STOP);
+  if(manual != 2){
+    guardar_path('D', manual);
+  }
+  BT1.print('D');
+  BT1.print('\n');
+  delay(100);
+  moverRobot(velocidad);
+  delay(500);
+  while(analogRead(sensorCI) > 100 && analogRead(sensorCD) > 100){
+    moverRobot(TURN_RIGHT_SOFT);
+  }
+  moverRobot(STOP);
+  delay(300);
+}
+
+void seguirAdelante(int manual){
+  moverRobot(STOP);
+  if(manual != 2){
+    guardar_path('A', manual);
+  }
+  BT1.print('A');
+  BT1.print('\n');
+  int tiempo_inicial = millis();
+  int tiempo_transcurrido = millis() - tiempo_inicial;
+  while(tiempo_transcurrido < 500){
+    if(analogRead(sensorCI) <= 100 && analogRead(sensorCD) > 100){
+      moverRobot(ADAPT_LEFT_SOFT);
+      delay(2);
+    }else if(analogRead(sensorCI) > 100 && analogRead(sensorCD) <= 100){
+      moverRobot(ADAPT_RIGHT_SOFT);
+      delay(2);
     }else{
-      paradoPorObjeto = 0;
-    }
-  }*/
-
-  if(paradoPorObjeto == 0){
-    //Seguir adelante
-    if(valorCI <= 80 && valorCD <= 80 && entroAUnIf == 0 && valorEI > 80 && valorED > 80){
       moverRobot(GO_AHEAD);
-      entroAUnIf = 1;
     }
-    //Acomodar a la izquierda
-    if(valorCI <= 80 && valorCD > 80 && entroAUnIf == 0 && valorEI > 80 && valorED > 80){
-      entroAUnIf = 1;
-      /*if(estaGirandoEnU == 1 || estaGirandoIzquierda == 1){
-        estaGirandoEnU = 0;
-        estaGirandoEnUSuave = 0;
-        estaGirandoIzquierda = 0;
-        estaGirandoIzquierdaSuave = 0;
-        moverRobot(STOP);
-        delay(200);
-      }else{
-        moverRobot(ADAPT_LEFT_SOFT);
-        delay(2);
-      }*/
-      if(estaGirandoDerecha == 1){
-        estaGirandoDerecha = 0;
-        estaGirandoDerechaSuave = 0;
-        moverRobot(STOP);
-        delay(200);
-      }else{
-        if(estaGirandoIzquierda == 1){
-          estaGirandoIzquierda = 0;
-          estaGirandoIzquierdaSuave = 0;
-          moverRobot(STOP);
-          delay(200);
-        }else{
-          if(estaGirandoEnU == 1){
-            estaGirandoEnU = 0;
-            estaGirandoEnUSuave = 0;
-            moverRobot(STOP);
-            delay(200);
-          }else{
-            moverRobot(ADAPT_LEFT_SOFT);
-            delay(2);
-          }
-        }
-      }
-    }
-    //Acomodar a la derecha
-    if(valorCI > 80 && valorCD <= 80 && entroAUnIf == 0 && valorEI > 80 && valorED > 80){
-      entroAUnIf = 1;
-      if(estaGirandoDerecha == 1){
-        estaGirandoDerecha = 0;
-        estaGirandoDerechaSuave = 0;
-        moverRobot(STOP);
-        delay(200);
-      }else{
-        if(estaGirandoIzquierda == 1){
-          estaGirandoIzquierda = 0;
-          estaGirandoIzquierdaSuave = 0;
-          moverRobot(STOP);
-          delay(200);
-        }else{
-          if(estaGirandoEnU == 1){
-            estaGirandoEnU = 0;
-            estaGirandoEnUSuave = 0;
-            moverRobot(STOP);
-            delay(200);
-          }else{
-            moverRobot(ADAPT_RIGHT_SOFT);
-            delay(2);
-          }
-        }
-      }
-    }
-    //Girar en U
-    if(valorCI > 80 && valorCD > 80 && entroAUnIf == 0 && estaGirandoIzquierda == 0 && estaGirandoDerecha == 0){
-      entroAUnIf = 1;
-      estaGirandoEnU = 1;
-      if(estaGirandoEnUSuave == 0){
-        moverRobot(TURN_U);
-        delay(1000);
-      }
-      moverRobot(TURN_U_SOFT);
-      estaGirandoEnUSuave = 1;
-    }
-    //Girar a la izquierda
-    if(valorCI <= 80 && valorCD <= 80 && valorEI <= 80 && estaGirandoDerecha == 0){
-      //entroAUnIf = 1;
-      estaGirandoIzquierda = 1;
-      if(estaGirandoIzquierdaSuave == 0){
-        moverRobot(TURN_LEFT);
-        delay(500);
-      }
-      moverRobot(TURN_LEFT_SOFT);
-      estaGirandoIzquierdaSuave = 1;
-    }
-    //Girar a la derecha (Si el de adelante detecta negro, debe seguir adelante por la regla de la mano izquierda)
-    if(valorCI <= 80 && valorCD <= 80 && valorED <= 80 && valorEI > 80 && valorEC > 80 && estaGirandoIzquierda == 0){
-      //entroAUnIf = 1;
-      estaGirandoDerecha = 1;
-      if(estaGirandoDerechaSuave == 0){
-        moverRobot(TURN_RIGHT);
-        delay(500);
-      }
-      moverRobot(TURN_RIGHT_SOFT);
-      estaGirandoDerechaSuave = 1;
-    }
+    tiempo_transcurrido = millis() - tiempo_inicial;
   }
+}
 
-  //moverRobot(GO_AHEAD);
-  
-  entroAUnIf = 0;
-  
-  //Bluethoot
-  /*if (BT1.available()){
-    mensajeBT = BT1.read();
-    //Serial.write(BT1.read());
+char sacar_path(){
+  char direccion = laberinto_path[laberinto_indice];
+  laberinto_indice ++;
+  return direccion;
+}
+
+void guardar_path(char direccion, int manual){
+  laberinto_path[laberinto_longitud] = direccion;
+  laberinto_longitud ++;
+  if(manual == 0){
+    resolver_laberinto();
   }
-  if(mensajeBT == 'F'){
-    Serial.println("Finalizar recorrido");
-    mensajeBT = ' ';
-  }*/
+}
+
+void resolver_laberinto(){
+  if(laberinto_longitud < 3 || laberinto_path[laberinto_longitud-2] != 'U'){
+    return; //sólo simplificar el camino si la segunda a la última vuelta fue una 'U'
+  }
+  int totalAngle = 0;
+  int i;
+  for(i=1;i<=3;i++)
+  {
+    switch(laberinto_path[laberinto_longitud-i]){
+      case 'D':
+        totalAngle += 90;
+        break;
+      case 'I':
+        totalAngle += 270;
+        break;
+      case 'U':
+        totalAngle += 180;
+        break;
+    }
+  }
+  totalAngle = totalAngle % 360; //Obtener el ángulo como un número entre 0 y 360 grados.
+  switch(totalAngle){ //reemplazar todos los giros con una sola.
+    case 0:
+      laberinto_path[laberinto_longitud - 3] = 'A';
+      break;
+    case 90:
+      laberinto_path[laberinto_longitud - 3] = 'D';
+      break;
+    case 180:
+      laberinto_path[laberinto_longitud - 3] = 'U';
+      break;
+    case 270:
+      laberinto_path[laberinto_longitud - 3] = 'I';
+      break;
+  }
+  laberinto_longitud -= 2; //La ruta es ahora dos pasos más cortos.
+}
+
+void imprimirCaminoSimplificado(){
+  int i;
+  BT1.print('\n');
+  for(i=0;i<laberinto_longitud;i++){
+    BT1.print(laberinto_path[i]);
+    BT1.print('\t');
+  }
+  BT1.print('\n');
   
-  /*if (Serial.available())
-    {  String S = GetLine();
-       BT1.print(S);
-       Serial.println("---> " + S);
-    }*/
+}
+String GetLine()
+{   String S = "" ;
+   if (Serial.available())
+      {    char c = Serial.read(); ;
+            while ( c != '\n')            //Hasta que el caracter sea intro
+              {     S = S + c ;
+                    delay(25) ;
+                    c = Serial.read();
+              }
+            return( S + '\n') ;
+      }
 }
 
 void moverRobot(int direccion){
   switch(direccion){
     case GO_AHEAD :  
-                      analogWrite (pinENA, 170);//170
-                      analogWrite (pinENB, 170);//170
+                      analogWrite (pinENA, 170);
+                      analogWrite (pinENB, 170);
                       //Direccion motor A
                       digitalWrite (pinIN1, HIGH);
                       digitalWrite (pinIN2, LOW);
@@ -265,9 +692,49 @@ void moverRobot(int direccion){
                       digitalWrite (pinIN3, HIGH);
                       digitalWrite (pinIN4, LOW);
                       break;
-    case TURN_RIGHT : 
-                      analogWrite (pinENA, 85);
+    case ADAPT_RIGHT : 
+                      analogWrite (pinENA, 170);
+                      analogWrite (pinENB, 0);
+                      //Direccion motor A
+                      digitalWrite (pinIN1, HIGH);
+                      digitalWrite (pinIN2, LOW);
+                      //Direccion motor B
+                      digitalWrite (pinIN3, HIGH);//HIGH
+                      digitalWrite (pinIN4, LOW);
+                      break;
+    case ADAPT_LEFT :   
+                      analogWrite (pinENA, 0);
                       analogWrite (pinENB, 170);
+                      //Direccion motor A
+                      digitalWrite (pinIN1, HIGH);//HIGH
+                      digitalWrite (pinIN2, LOW);
+                      //Direccion motor B
+                      digitalWrite (pinIN3, HIGH);
+                      digitalWrite (pinIN4, LOW);
+                      break;
+    case ADAPT_RIGHT_SOFT : 
+                      analogWrite (pinENA, 170);
+                      analogWrite (pinENB, 0);
+                      //Direccion motor A
+                      digitalWrite (pinIN1, HIGH);
+                      digitalWrite (pinIN2, LOW);
+                      //Direccion motor B
+                      digitalWrite (pinIN3, HIGH);//HIGH
+                      digitalWrite (pinIN4, LOW);
+                      break;
+    case ADAPT_LEFT_SOFT :
+                      analogWrite (pinENA, 0);
+                      analogWrite (pinENB, 170);
+                      //Direccion motor A
+                      digitalWrite (pinIN1, HIGH);//HIGH
+                      digitalWrite (pinIN2, LOW);
+                      //Direccion motor B
+                      digitalWrite (pinIN3, HIGH);
+                      digitalWrite (pinIN4, LOW);
+                      break;
+    case TURN_RIGHT : 
+                      analogWrite (pinENA, 100);//85
+                      analogWrite (pinENB, 185);
                       //Direccion motor A
                       digitalWrite (pinIN1, HIGH);
                       digitalWrite (pinIN2, LOW);
@@ -277,7 +744,7 @@ void moverRobot(int direccion){
                       break;
     case TURN_LEFT : 
                       analogWrite (pinENA, 170);
-                      analogWrite (pinENB, 85);
+                      analogWrite (pinENB, 105);//85
                       //Direccion motor A
                       digitalWrite (pinIN1, LOW);
                       digitalWrite (pinIN2, HIGH);
@@ -286,8 +753,8 @@ void moverRobot(int direccion){
                       digitalWrite (pinIN4, LOW);
                       break;
     case TURN_RIGHT_SOFT : 
-                      analogWrite (pinENA, 70);
-                      analogWrite (pinENB, 70);
+                      analogWrite (pinENA, 100);//70
+                      analogWrite (pinENB, 100);//70
                       //Direccion motor A
                       digitalWrite (pinIN1, HIGH);
                       digitalWrite (pinIN2, LOW);
@@ -296,8 +763,8 @@ void moverRobot(int direccion){
                       digitalWrite (pinIN4, HIGH);
                       break;
     case TURN_LEFT_SOFT : 
-                      analogWrite (pinENA, 70);
-                      analogWrite (pinENB, 70);
+                      analogWrite (pinENA, 100);//70
+                      analogWrite (pinENB, 100);//70
                       //Direccion motor A
                       digitalWrite (pinIN1, LOW);
                       digitalWrite (pinIN2, HIGH);
@@ -305,49 +772,29 @@ void moverRobot(int direccion){
                       digitalWrite (pinIN3, HIGH);
                       digitalWrite (pinIN4, LOW);
                       break;
-    case ADAPT_RIGHT : 
-                      analogWrite (pinENA, 170);//170
-                      analogWrite (pinENB, 0);
+    case TURN_RIGHT_MANUAL : 
+                      analogWrite (pinENA, 170);//70
+                      analogWrite (pinENB, 170);//70
                       //Direccion motor A
                       digitalWrite (pinIN1, HIGH);
                       digitalWrite (pinIN2, LOW);
                       //Direccion motor B
-                      digitalWrite (pinIN3, LOW);//HIGH
-                      digitalWrite (pinIN4, LOW);
+                      digitalWrite (pinIN3, LOW);
+                      digitalWrite (pinIN4, HIGH);
                       break;
-    case ADAPT_LEFT :   
-                      analogWrite (pinENA, 0);
-                      analogWrite (pinENB, 170);//170
+    case TURN_LEFT_MANUAL : 
+                      analogWrite (pinENA, 170);//70
+                      analogWrite (pinENB, 170);//70
                       //Direccion motor A
-                      digitalWrite (pinIN1, LOW);//HIGH
-                      digitalWrite (pinIN2, LOW);
-                      //Direccion motor B
-                      digitalWrite (pinIN3, HIGH);
-                      digitalWrite (pinIN4, LOW);
-                      break;
-    case ADAPT_RIGHT_SOFT : 
-                      analogWrite (pinENA, 170);//170
-                      analogWrite (pinENB, 0);
-                      //Direccion motor A
-                      digitalWrite (pinIN1, HIGH);
-                      digitalWrite (pinIN2, LOW);
-                      //Direccion motor B
-                      digitalWrite (pinIN3, LOW);//HIGH
-                      digitalWrite (pinIN4, LOW);
-                      break;
-    case ADAPT_LEFT_SOFT :
-                      analogWrite (pinENA, 0);
-                      analogWrite (pinENB, 170);//170
-                      //Direccion motor A
-                      digitalWrite (pinIN1, LOW);//HIGH
-                      digitalWrite (pinIN2, LOW);
+                      digitalWrite (pinIN1, LOW);
+                      digitalWrite (pinIN2, HIGH);
                       //Direccion motor B
                       digitalWrite (pinIN3, HIGH);
                       digitalWrite (pinIN4, LOW);
                       break;
     case TURN_U :
                       analogWrite (pinENA, 170);
-                      analogWrite (pinENB, 85);
+                      analogWrite (pinENB, 105);//85
                       //Direccion motor A
                       digitalWrite (pinIN1, LOW);
                       digitalWrite (pinIN2, HIGH);
@@ -356,8 +803,8 @@ void moverRobot(int direccion){
                       digitalWrite (pinIN4, LOW);
                       break;
     case TURN_U_SOFT :
-                      analogWrite (pinENA, 70);
-                      analogWrite (pinENB, 70);
+                      analogWrite (pinENA, 100);//70
+                      analogWrite (pinENB, 100);//70
                       //Direccion motor A
                       digitalWrite (pinIN1, LOW);
                       digitalWrite (pinIN2, HIGH);
@@ -386,18 +833,4 @@ void moverRobot(int direccion){
                       digitalWrite (pinIN4, LOW);
                       break;
   }
-}
-
-
-String GetLine()
-{   String S = "" ;
-   if (Serial.available())
-      {    char c = Serial.read(); ;
-            while ( c != '\n')            //Hasta que el caracter sea intro
-              {     S = S + c ;
-                    delay(25) ;
-                    c = Serial.read();
-              }
-            return( S + '\n') ;
-      }
 }
