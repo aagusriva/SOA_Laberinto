@@ -85,43 +85,6 @@ void setup() {
 }
 
 void loop() {  
-  /*valorCI = analogRead(sensorCI);
-  valorCD = analogRead(sensorCD);
-  valorEI = analogRead(sensorEI);
-  valorED = analogRead(sensorED);
-  BT1.print(valorCI);
-  BT1.print('\t');
-  BT1.print(valorCD);
-  BT1.print('\t');
-  BT1.print(valorEI);
-  BT1.print('\t');
-  BT1.print(valorED);
-  BT1.print('\n');
-  if(valorEI <= 150){
-    BT1.print('N');
-  }else{
-    BT1.print('B');
-  }
-  BT1.print('\t');
-  if(valorCI <= 150){
-    BT1.print('N');
-  }else{
-    BT1.print('B');
-  }
-  BT1.print('\t');
-  if(valorCD <= 150){
-    BT1.print('N');
-  }else{
-    BT1.print('B');
-  }
-  BT1.print('\t');
-  if(valorED <= 150){
-    BT1.print('N');
-  }else{
-    BT1.print('B');
-  }
-  BT1.print('\n');
-  delay(150);*/
   
   while(band_inicio != 'B' && band_inicio != 'T' && band_inicio != 'F' && band_inicio != 'M' && band_inicio != 'L' && band_inicio != 'O' && band_inicio != 'S'){
     if (BT1.available()){
